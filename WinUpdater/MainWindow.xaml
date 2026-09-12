@@ -1,0 +1,186 @@
+<ui:FluentWindow
+    Background="#202020"
+    Height="700"
+    Title="{Binding AppTitle, Mode=OneWay}"
+    Width="1050"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d"
+    x:Class="WinUpdater.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <ui:FluentWindow.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </ui:FluentWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TitleBar
+            x:Name="MainTitleBar"
+            Foreground="Gray"
+            Grid.Row="0"
+            Height="32"
+            Title="{Binding AppTitle, Mode=OneWay}"
+            Icon="/Assets/WinUpdater.ico" />
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <ui:NavigationView
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                PaneDisplayMode="Left"
+                IsPaneOpen="False"
+                CompactPaneLength="48"
+                OpenPaneLength="200"
+                IsBackButtonVisible="Collapsed"
+                Header="">
+                <ui:NavigationView.MenuItems>
+                    <ui:NavigationViewItem Content="Startseite" Icon="{ui:SymbolIcon Symbol=Home24}" Tag="Home"
+                                           Click="MenuItemClicked"
+                                           ToolTipService.ToolTip="Startseite"
+                                           ToolTipService.Placement="Right" />
+                    <ui:NavigationViewItem Content="Updates suchen" Icon="{ui:SymbolIcon Symbol=ArrowUp24}"
+                                           Tag="Updates" Click="MenuItemClicked"
+                                           ToolTipService.ToolTip="Updates suchen"
+                                           ToolTipService.Placement="Right" />
+                    <ui:NavigationViewItem Content="Installierte Apps" Icon="{ui:SymbolIcon Symbol=Document24}"
+                                           Tag="Installed" Click="MenuItemClicked"
+                                           ToolTipService.ToolTip="Installierte Apps"
+                                           ToolTipService.Placement="Right" />
+                    <ui:NavigationViewItem Content="Verlauf" Icon="{ui:SymbolIcon Symbol=History24}" Tag="History"
+                                           Click="MenuItemClicked"
+                                           ToolTipService.ToolTip="Verlauf"
+                                           ToolTipService.Placement="Right" />
+
+
+                </ui:NavigationView.MenuItems>
+
+                <ui:NavigationView.FooterMenuItems>
+                    <ui:NavigationViewItem Content="Log-Konsole" Icon="{ui:SymbolIcon Symbol=Code24}" Tag="Logs"
+                                           Click="MenuItemClicked"
+                                           ToolTipService.ToolTip="Log-Konsole"
+                                           ToolTipService.Placement="Right" />
+                    <ui:NavigationViewItem Content="Ignorierte Pakete"
+                                           Icon="{ui:SymbolIcon Symbol=ProhibitedMultiple24}" Tag="Ignore"
+                                           Click="MenuItemClicked"
+                                           ToolTipService.ToolTip="Ignorierte Pakete"
+                                           ToolTipService.Placement="Right" />
+                </ui:NavigationView.FooterMenuItems>
+            </ui:NavigationView>
+
+            <Grid Grid.Column="1">
+                <ContentControl Content="{Binding CurrentView}" />
+
+                <!-- Ladeoverlay -->
+                <Grid
+                    Background="#D8141414"
+                    Visibility="{Binding IsExecuting, Converter={StaticResource BoolToVis}}"
+                    Panel.ZIndex="100">
+
+                    <Border
+                        Background="#1F1F1F"
+                        BorderBrush="#2D2D2D"
+                        BorderThickness="1"
+                        CornerRadius="12"
+                        Padding="40,32"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        MinWidth="420">
+
+                        <StackPanel>
+
+                            <!-- App-Name + aktuelle Paket-Info -->
+                            <ui:TextBlock
+                                Text="{Binding InstallCurrentApp}"
+                                FontSize="15"
+                                FontWeight="SemiBold"
+                                Foreground="White"
+                                HorizontalAlignment="Center"
+                                TextWrapping="Wrap"
+                                TextAlignment="Center"
+                                Margin="0,0,0,6" />
+
+                            <!-- Phase: Herunterladen / Installieren / … -->
+                            <ui:TextBlock
+                                Text="{Binding InstallPhase}"
+                                FontSize="12"
+                                Foreground="#888"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,20" />
+
+                            <!-- Fortschrittsbalken für aktuelles Paket -->
+                            <ProgressBar
+                                Value="{Binding InstallProgress, Mode=OneWay}"
+                                Minimum="0"
+                                Maximum="100"
+                                Height="6"
+                                Background="#2D2D2D"
+                                Foreground="#007ACC"
+                                Margin="0,0,0,8" />
+
+                            <!-- Prozentzahl -->
+                            <ui:TextBlock
+                                Text="{Binding InstallProgress, StringFormat={}{0:0}%}"
+                                FontSize="12"
+                                Foreground="#007ACC"
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,20" />
+
+                            <!-- Gesamtfortschritt bei mehreren Paketen -->
+                            <StackPanel
+                                Visibility="{Binding HasMultiplePackages, Converter={StaticResource BoolToVis}}">
+
+                                <ui:TextBlock
+                                    Text="{Binding InstallOverallText}"
+                                    FontSize="11"
+                                    Foreground="#666"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,0,0,6" />
+
+                                <ProgressBar
+                                    Value="{Binding InstallOverallProgress, Mode=OneWay}"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Height="4"
+                                    Background="#2D2D2D"
+                                    Foreground="#2E8B57"
+                                    Margin="0,0,0,20" />
+                            </StackPanel>
+
+                            <!-- Stopp-Button -->
+                            <ui:Button
+                                Content="🛑 Abbrechen"
+                                Background="#D9534F"
+                                Foreground="White"
+                                HorizontalAlignment="Center"
+                                Padding="20,6"
+                                Command="{Binding CancelCommand}"
+                                Visibility="{Binding CanStop, Converter={StaticResource BoolToVis}}" />
+
+                            <!-- Schließen-Button -->
+                            <ui:Button
+                                Content="Schließen"
+                                Background="#007ACC"
+                                Foreground="White"
+                                HorizontalAlignment="Center"
+                                Padding="20,6"
+                                Command="{Binding CloseCommand}"
+                                Visibility="{Binding IsOperationCompleted, Converter={StaticResource BoolToVis}}" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
+</ui:FluentWindow>
