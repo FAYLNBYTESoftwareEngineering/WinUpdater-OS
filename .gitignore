@@ -1,0 +1,8 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+WinUpdater/Assets/dotnet-sdk-8x64.exe
+.idea
+.env
