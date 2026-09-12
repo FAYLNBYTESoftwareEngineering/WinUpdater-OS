@@ -1,0 +1,33 @@
+﻿<UserControl
+    x:Class="WinUpdater.Views.InstalledView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:Button
+            Grid.Row="0"
+            Click="LoadInstalledClick"
+            Content="📋 Installierte Programme laden"
+            Margin="0,0,0,15"
+            Padding="15,7" />
+
+        <Border Grid.Row="1" BorderBrush="#333" BorderThickness="1" CornerRadius="6">
+            <ui:TextBox
+                Background="#2D2D30"
+                FontFamily="Consolas"
+                FontSize="13"
+                Foreground="White"
+                IsReadOnly="True"
+                AcceptsReturn="True"
+                TextWrapping="Wrap"
+                VerticalScrollBarVisibility="Auto"
+                Text="{Binding InstalledOutputText, Mode=OneWay}" />
+        </Border>
+    </Grid>
+</UserControl>

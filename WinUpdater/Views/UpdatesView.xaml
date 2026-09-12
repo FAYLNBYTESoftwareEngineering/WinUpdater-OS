@@ -1,0 +1,91 @@
+<UserControl
+    x:Class="WinUpdater.Views.UpdatesView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10" FlowDirection="LeftToRight">
+            <ui:TextBox
+                Foreground="White"
+                Height="35"
+                Margin="0,0,10,0"
+                PlaceholderText="🔍 Name oder ID filtern…"
+                Width="230"
+                Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" />
+
+            <ui:Button Click="ShowUpdatesClick" Content="⬆ Updates suchen" Margin="0,0,5,0" Padding="12,5" />
+            <ui:Button Background="#2E8B57" Foreground="White"
+                       Click="UpdateSelectedClick" Content="✔ Jetzt aktualisieren" Margin="0,0,5,0" Padding="12,5" />
+            <ui:Button Background="#6A0DAD" Foreground="White"
+                       Click="DiagnoseClick" Content="🔬 Diagnose"
+                       Padding="12,5" />
+        </StackPanel>
+
+        <!-- Auswahl-Helfer -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <ui:Button Click="SelectAllClick" Content="☑ Alle auswählen" Margin="0,0,8,0" Padding="10,4" />
+            <ui:Button Click="SelectNoneClick" Content="☐ Keine auswählen" Padding="10,4" />
+        </StackPanel>
+
+        <!-- DataGrid -->
+        <Border Grid.Row="2" BorderBrush="#333" BorderThickness="1" CornerRadius="6">
+            <DataGrid
+                x:Name="UpdateDataGrid"
+                Background="#2D2D30"
+                Foreground="White"
+                RowBackground="#2D2D30"
+                AlternatingRowBackground="#333337"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                HeadersVisibility="Column"
+                GridLinesVisibility="None"
+                SelectionMode="Single"
+                ItemsSource="{Binding UpdateView}">
+
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <EventSetter Event="PreviewMouseLeftButtonDown"
+                                     Handler="DataGridCell_PreviewMouseLeftButtonDown" />
+                    </Style>
+                </DataGrid.Resources>
+
+                <!-- Kontextmenü: Paket ignorieren -->
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="🚫 Paket ignorieren" Click="IgnorePackageClick" />
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+
+                <DataGrid.Columns>
+                    <!-- Checkbox-Spalte: sofortiger Toggle ohne Doppelklick -->
+                    <DataGridTemplateColumn Header="Auswahl" Width="75" CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox
+                                    IsChecked="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="4,0"
+                                    Width="50" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="Auto" IsReadOnly="True" />
+                    <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="Auto" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Version" Binding="{Binding Version}" Width="Auto" IsReadOnly="True" />
+                    <DataGridTextColumn Header="Verfügbar" Binding="{Binding AvailableVersion}" Width="Auto"
+                                        IsReadOnly="True" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

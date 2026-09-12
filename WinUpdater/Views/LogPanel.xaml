@@ -1,0 +1,41 @@
+﻿<UserControl
+    x:Class="WinUpdater.Views.LogPanel"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <ui:TextBlock
+            Grid.Row="0"
+            Text="Live-Ausgabe (Winget-Prozess)"
+            FontSize="16"
+            FontWeight="SemiBold"
+            Foreground="White"
+            Margin="0,0,0,10" />
+
+        <Border Grid.Row="1" BorderBrush="#333" BorderThickness="1" CornerRadius="6">
+            <!-- ScrollViewer mit Auto-Scroll via Code-Behind -->
+            <ScrollViewer
+                x:Name="LogScrollViewer"
+                VerticalScrollBarVisibility="Auto">
+                <ui:TextBox
+                    x:Name="LogTextBox"
+                    Background="#1E1E1E"
+                    FontFamily="Consolas"
+                    FontSize="13"
+                    Foreground="#00FF00"
+                    IsReadOnly="True"
+                    AcceptsReturn="True"
+                    TextWrapping="Wrap"
+                    BorderThickness="0"
+                    Text="{Binding LogOutputText, Mode=OneWay}"
+                    TextChanged="LogTextBox_TextChanged" />
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>
